@@ -4,8 +4,8 @@ import java.io.IOException
 import java.io.Serializable
 import java.lang.reflect.Field
 import com.typesafe.config.impl.ConfigImplUtil
-import Null._
-import ValidationFailed._
+import ConfigException.Null._
+import ConfigException.ValidationFailed._
 import ConfigException._
 //remove if not needed
 import scala.collection.JavaConversions._
@@ -132,7 +132,7 @@ object ConfigException {
     }
 
     def this(path: String, message: String, cause: Throwable) {
-      this(if (path != null) ("Invalid path '" + path + "': " + message) else message, cause)
+      this(null, null, if (path != null) ("Invalid path '" + path + "': " + message) else message, cause)
     }
 
     def this(path: String, message: String) {
@@ -233,11 +233,11 @@ object ConfigException {
     private def makeMessage(problems: java.lang.Iterable[ValidationProblem]): String = {
       val sb = new StringBuilder()
       for (p <- problems) {
-        sb.append(p.origin().description())
+        sb.append(p.origin.description)
         sb.append(": ")
-        sb.append(p.path())
+        sb.append(p.path)
         sb.append(": ")
-        sb.append(p.problem())
+        sb.append(p.problem)
         sb.append(", ")
       }
       if (sb.length == 0) throw new ConfigException.BugOrBroken("ValidationFailed must have a non-empty list of problems")
@@ -289,7 +289,7 @@ abstract class ConfigException protected (var origin: ConfigOrigin, message: Str
     extends RuntimeException(origin.description() + ": " + message, cause) with Serializable {
 
   protected def this(origin: ConfigOrigin, message: String) {
-    this(origin.description() + ": " + message, null)
+    this(origin.description + ": " + message, null)
   }
 
   protected def this(message: String, cause: Throwable) {
