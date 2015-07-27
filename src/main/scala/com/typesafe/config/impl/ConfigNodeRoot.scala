@@ -3,12 +3,13 @@ package com.typesafe.config.impl
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigOrigin
 import com.typesafe.config.ConfigSyntax
+import com.typesafe.config.ConfigSyntax._
 import java.util.ArrayList
 import java.util.Collection
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class ConfigNodeRoot(children: Collection[AbstractConfigNode], val origin: ConfigOrigin)
+class ConfigNodeRoot(_children: Collection[AbstractConfigNode], val origin: ConfigOrigin)
     extends ConfigNodeComplexValue(children) {
 
   protected override def newNode(nodes: Collection[AbstractConfigNode]): ConfigNodeRoot = {
@@ -23,7 +24,7 @@ class ConfigNodeRoot(children: Collection[AbstractConfigNode], val origin: Confi
   }
 
   protected def setValue(desiredPath: String, value: AbstractConfigNodeValue, flavor: ConfigSyntax): ConfigNodeRoot = {
-    val childrenCopy = new ArrayList[AbstractConfigNode](children)
+    val childrenCopy = new ArrayList[AbstractConfigNode](_children)
     for (i <- 0 until childrenCopy.size) {
       val node = childrenCopy.get(i)
       if (node.isInstanceOf[ConfigNodeComplexValue]) {

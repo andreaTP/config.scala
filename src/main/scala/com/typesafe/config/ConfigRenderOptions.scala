@@ -1,7 +1,7 @@
 package com.typesafe.config
 
 import ConfigRenderOptions._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
+//import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -42,10 +42,10 @@ object ConfigRenderOptions {
  *         ConfigRenderOptions.defaults().setComments(false)
  * </pre>
  */
-class ConfigRenderOptions private (@BeanProperty val originComments: Boolean, 
-    @BeanProperty val comments: Boolean, 
-    @BeanProperty val formatted: Boolean, 
-    @BeanProperty val json: Boolean) {
+class ConfigRenderOptions private (val originComments: Boolean, 
+    val comments: Boolean, 
+    val formatted: Boolean, 
+    val json: Boolean) {
 
   /**
    * Returns options with comments toggled. This controls human-written

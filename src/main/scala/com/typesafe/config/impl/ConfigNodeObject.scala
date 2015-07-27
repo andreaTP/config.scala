@@ -1,12 +1,13 @@
 package com.typesafe.config.impl
 
 import com.typesafe.config.ConfigSyntax
+import com.typesafe.config.ConfigSyntax._
 import java.util.ArrayList
 import java.util.Collection
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigNodeComplexValue(children) {
+class ConfigNodeObject(thischildren: Collection[AbstractConfigNode]) extends ConfigNodeComplexValue(thischildren) {
 
   protected override def newNode(nodes: Collection[AbstractConfigNode]): ConfigNodeObject = new ConfigNodeObject(nodes)
 
@@ -37,7 +38,7 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
     while (i >= 0) {
       if (childrenCopy.get(i).isInstanceOf[ConfigNodeSingleToken]) {
         val t = childrenCopy.get(i).asInstanceOf[ConfigNodeSingleToken]
-          .token()
+          .token
         if (flavor == ConfigSyntax.JSON && !seenNonMatching && t == Tokens.COMMA) {
           childrenCopy.remove(i)
         }
@@ -50,10 +51,11 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
       if ((valueCopy == null && key == desiredPath) || 
         (key.startsWith(desiredPath) && key != desiredPath)) {
         childrenCopy.remove(i)
-        for (j <- i until childrenCopy.size) {
+        var j = i
+        while(j < childrenCopy.size) {
           if (childrenCopy.get(j).isInstanceOf[ConfigNodeSingleToken]) {
             val t = childrenCopy.get(j).asInstanceOf[ConfigNodeSingleToken]
-              .token()
+              .token
             if (Tokens.isIgnoredWhitespace(t) || t == Tokens.COMMA) {
               childrenCopy.remove(j)
               j -= 1
@@ -69,7 +71,7 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
         var indentedValue: AbstractConfigNodeValue = null
         val before = if (i - 1 > 0) childrenCopy.get(i - 1) else null
         indentedValue = if (value.isInstanceOf[ConfigNodeComplexValue] && before.isInstanceOf[ConfigNodeSingleToken] && 
-          Tokens.isIgnoredWhitespace(before.asInstanceOf[ConfigNodeSingleToken].token())) value.asInstanceOf[ConfigNodeComplexValue].indentText(before) else value
+          Tokens.isIgnoredWhitespace(before.asInstanceOf[ConfigNodeSingleToken].token)) value.asInstanceOf[ConfigNodeComplexValue].indentText(before) else value
         childrenCopy.set(i, node.replaceValue(indentedValue))
         valueCopy = null
       } else if (desiredPath.startsWith(key)) {
@@ -115,14 +117,14 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
       if (!seenNewLine) {
         if (children.get(i).isInstanceOf[ConfigNodeSingleToken] && 
           Tokens.isNewline(children.get(i).asInstanceOf[ConfigNodeSingleToken]
-          .token())) {
+          .token)) {
           seenNewLine = true
           indentation.add(new ConfigNodeSingleToken(Tokens.newLine(null)))
         }
       } else {
         if (children.get(i).isInstanceOf[ConfigNodeSingleToken] && 
           Tokens.isIgnoredWhitespace(children.get(i).asInstanceOf[ConfigNodeSingleToken]
-          .token()) && 
+          .token) && 
           i + 1 < children.size && 
           (children.get(i + 1).isInstanceOf[ConfigNodeField] || 
           children.get(i + 1).isInstanceOf[ConfigNodeInclude])) {
@@ -136,12 +138,12 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
     } else {
       val last = children.get(children.size - 1)
       if (last.isInstanceOf[ConfigNodeSingleToken] && 
-        last.asInstanceOf[ConfigNodeSingleToken].token() == Tokens.CLOSE_CURLY) {
+        last.asInstanceOf[ConfigNodeSingleToken].token == Tokens.CLOSE_CURLY) {
         val beforeLast = children.get(children.size - 2)
         var indent = ""
         if (beforeLast.isInstanceOf[ConfigNodeSingleToken] && 
-          Tokens.isIgnoredWhitespace(beforeLast.asInstanceOf[ConfigNodeSingleToken].token())) indent = beforeLast.asInstanceOf[ConfigNodeSingleToken].token()
-          .tokenText()
+          Tokens.isIgnoredWhitespace(beforeLast.asInstanceOf[ConfigNodeSingleToken].token)) indent = beforeLast.asInstanceOf[ConfigNodeSingleToken].token
+          .tokenText
         indent += "  "
         indentation.add(new ConfigNodeSingleToken(Tokens.newIgnoredWhitespace(null, indent)))
         return indentation
@@ -153,13 +155,13 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
   protected def addValueOnPath(desiredPath: ConfigNodePath, value: AbstractConfigNodeValue, flavor: ConfigSyntax): ConfigNodeObject = {
     val path = desiredPath.value()
     val childrenCopy = new ArrayList[AbstractConfigNode](super.children)
-    val indentation = new ArrayList[AbstractConfigNode](indentation())
+    val _indentation = new ArrayList[AbstractConfigNode](indentation())
     var indentedValue: AbstractConfigNodeValue = null
-    indentedValue = if (value.isInstanceOf[ConfigNodeComplexValue] && !indentation.isEmpty) value.asInstanceOf[ConfigNodeComplexValue].indentText(indentation.get(indentation.size - 1)) else value
-    val sameLine = !(indentation.size > 0 && 
-      indentation.get(0).isInstanceOf[ConfigNodeSingleToken] && 
-      Tokens.isNewline(indentation.get(0).asInstanceOf[ConfigNodeSingleToken]
-      .token()))
+    indentedValue = if (value.isInstanceOf[ConfigNodeComplexValue] && !_indentation.isEmpty) value.asInstanceOf[ConfigNodeComplexValue].indentText(_indentation.get(_indentation.size - 1)) else value
+    val sameLine = !(_indentation.size > 0 && 
+      _indentation.get(0).isInstanceOf[ConfigNodeSingleToken] && 
+      Tokens.isNewline(_indentation.get(0).asInstanceOf[ConfigNodeSingleToken]
+      .token))
     if (path.length > 1) {
       var i = super.children.size - 1
       while (i >= 0) {
@@ -180,7 +182,7 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
     val startsWithBrace = !super.children.isEmpty && 
       super.children.get(0).isInstanceOf[ConfigNodeSingleToken] && 
       super.children.get(0).asInstanceOf[ConfigNodeSingleToken]
-      .token() == 
+      .token == 
       Tokens.OPEN_CURLY
     val newNodes = new ArrayList[AbstractConfigNode]()
     newNodes.addAll(indentation)
@@ -208,7 +210,7 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
           if (i + 1 >= childrenCopy.size || 
             !(childrenCopy.get(i + 1).isInstanceOf[ConfigNodeSingleToken] && 
             childrenCopy.get(i + 1).asInstanceOf[ConfigNodeSingleToken]
-            .token() == 
+            .token == 
             Tokens.COMMA)) childrenCopy.add(i + 1, new ConfigNodeSingleToken(Tokens.COMMA))
           //break
         }
@@ -218,17 +220,17 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
           Tokens.CLOSE_CURLY) {
           val previous = childrenCopy.get(i - 1)
           if (previous.isInstanceOf[ConfigNodeSingleToken] && 
-            Tokens.isNewline(previous.asInstanceOf[ConfigNodeSingleToken].token())) {
+            Tokens.isNewline(previous.asInstanceOf[ConfigNodeSingleToken].token)) {
             childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
             i -= 1
           } else if (previous.isInstanceOf[ConfigNodeSingleToken] && 
-            Tokens.isIgnoredWhitespace(previous.asInstanceOf[ConfigNodeSingleToken].token())) {
+            Tokens.isIgnoredWhitespace(previous.asInstanceOf[ConfigNodeSingleToken].token)) {
             val beforePrevious = childrenCopy.get(i - 2)
             if (sameLine) {
               childrenCopy.add(i - 1, new ConfigNodeField(newNodes))
               i -= 1
             } else if (beforePrevious.isInstanceOf[ConfigNodeSingleToken] && 
-              Tokens.isNewline(beforePrevious.asInstanceOf[ConfigNodeSingleToken].token())) {
+              Tokens.isNewline(beforePrevious.asInstanceOf[ConfigNodeSingleToken].token)) {
               childrenCopy.add(i - 2, new ConfigNodeField(newNodes))
               i -= 2
             } else {
@@ -243,7 +245,7 @@ class ConfigNodeObject(children: Collection[AbstractConfigNode]) extends ConfigN
       if (!childrenCopy.isEmpty && 
         childrenCopy.get(childrenCopy.size - 1).isInstanceOf[ConfigNodeSingleToken] && 
         Tokens.isNewline(childrenCopy.get(childrenCopy.size - 1).asInstanceOf[ConfigNodeSingleToken]
-        .token())) childrenCopy.add(childrenCopy.size - 1, new ConfigNodeField(newNodes)) else childrenCopy.add(new ConfigNodeField(newNodes))
+        .token)) childrenCopy.add(childrenCopy.size - 1, new ConfigNodeField(newNodes)) else childrenCopy.add(new ConfigNodeField(newNodes))
     }
     new ConfigNodeObject(childrenCopy)
   }

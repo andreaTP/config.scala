@@ -4,6 +4,7 @@ import java.io.ObjectStreamException
 import java.io.Serializable
 import com.typesafe.config.ConfigOrigin
 import com.typesafe.config.ConfigValueType
+import com.typesafe.config.ConfigValueType._
 //remove if not needed
 import scala.collection.JavaConversions._
 

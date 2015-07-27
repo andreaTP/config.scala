@@ -1,7 +1,7 @@
 package com.typesafe.config
 
 import ConfigResolveOptions._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
+//import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -49,7 +49,7 @@ object ConfigResolveOptions {
  * environment variables or other external system information. (Right now,
  * environment variables are the only example.)
  */
-class ConfigResolveOptions private (@BeanProperty val useSystemEnvironment: Boolean, @BeanProperty val allowUnresolved: Boolean)
+class ConfigResolveOptions private (val useSystemEnvironment: Boolean, val allowUnresolved: Boolean)
     {
 
   /**

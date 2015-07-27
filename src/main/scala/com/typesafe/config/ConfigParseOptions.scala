@@ -3,6 +3,7 @@ package com.typesafe.config
 import ConfigParseOptions._
 //remove if not needed
 import scala.collection.JavaConversions._
+import ConfigSyntax._
 
 object ConfigParseOptions {
 

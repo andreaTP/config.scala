@@ -2,6 +2,7 @@ package com.typesafe.config
 
 //remove if not needed
 import scala.collection.JavaConversions._
+import ConfigValueType._
 
 /**
  * An immutable value, following the <a href="http://json.org">JSON</a> type

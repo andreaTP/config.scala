@@ -10,5 +10,5 @@ class ConfigNodeComment(comment: Token) extends ConfigNodeSingleToken(comment) {
     throw new ConfigException.BugOrBroken("Tried to create a ConfigNodeComment from a non-comment token")
   }
 
-  protected def commentText(): String = Tokens.getCommentText(super.token)
+  def commentText(): String = Tokens.getCommentText(super.token)
 }

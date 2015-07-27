@@ -4,6 +4,7 @@ import java.io.ObjectStreamException
 import java.io.Serializable
 import com.typesafe.config.ConfigOrigin
 import com.typesafe.config.ConfigValueType
+import com.typesafe.config.ConfigValueType._
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -17,7 +18,7 @@ class ConfigDouble(origin: ConfigOrigin, val value: Double, originalText: String
 
   override def transformToString(): String = {
     val s = super.transformToString()
-    if (s == null) Double toString value else s
+    if (s == null) value.toString else s
   }
 
   protected override def longValue(): Long = value.toLong

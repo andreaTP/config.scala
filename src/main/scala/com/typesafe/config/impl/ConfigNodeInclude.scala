@@ -5,10 +5,10 @@ import java.util.Collection
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class ConfigNodeInclude(children: Collection[AbstractConfigNode], protected var kind: ConfigIncludeKind)
+class ConfigNodeInclude(_children: Collection[AbstractConfigNode], protected var kind: ConfigIncludeKind)
     extends AbstractConfigNode {
 
-  val children = new ArrayList[AbstractConfigNode](children)
+  val children = new ArrayList[AbstractConfigNode](_children)
 
   protected override def tokens(): Collection[Token] = {
     val tokens = new ArrayList[Token]()

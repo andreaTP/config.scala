@@ -12,6 +12,7 @@ import com.typesafe.config.ConfigOrigin
 import com.typesafe.config.ConfigRenderOptions
 import com.typesafe.config.ConfigValue
 import AbstractConfigValue._
+import com.typesafe.config.ConfigValueType._
 //remove if not needed
 import scala.collection.JavaConversions._
 

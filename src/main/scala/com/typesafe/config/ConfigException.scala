@@ -289,7 +289,7 @@ abstract class ConfigException protected (var origin: ConfigOrigin, message: Str
     extends RuntimeException(origin.description() + ": " + message, cause) with Serializable {
 
   protected def this(origin: ConfigOrigin, message: String) {
-    this(origin.description + ": " + message, null)
+    this(null, origin.description + ": " + message, null)
   }
 
   protected def this(message: String, cause: Throwable) {

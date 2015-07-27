@@ -7,9 +7,9 @@ import java.util.List
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class ConfigNodeField(children: Collection[AbstractConfigNode]) extends AbstractConfigNode {
+class ConfigNodeField(_children: Collection[AbstractConfigNode]) extends AbstractConfigNode {
 
-  private val children = new ArrayList[AbstractConfigNode](children)
+  val children = new ArrayList[AbstractConfigNode](_children)
 
   protected override def tokens(): Collection[Token] = {
     val tokens = new ArrayList[Token]()

@@ -184,11 +184,10 @@ object ConfigImpl {
       if (mapMode == FromMapMode.KEYS_ARE_KEYS) {
         val values = new HashMap[String, AbstractConfigValue]()
         for ((key, value) <- `object`.asInstanceOf[Map[_, _]]) {
-          val key = key
           if (!(key.isInstanceOf[String])) throw new ConfigException.BugOrBroken("bug in method caller: not valid to create ConfigObject from map with non-String key: " + 
             key)
-          val value = fromAnyRef(value, origin, mapMode)
-          values.put(key.asInstanceOf[String], value)
+          val _value: AbstractConfigValue = fromAnyRef(value.asInstanceOf[AnyRef], origin, mapMode)
+          values.put(key.asInstanceOf[String], _value)
         }
         new SimpleConfigObject(origin, values)
       } else {
@@ -199,7 +198,7 @@ object ConfigImpl {
       if (!i.hasNext) return emptyList(origin)
       val values = new ArrayList[AbstractConfigValue]()
       while (i.hasNext) {
-        val v = fromAnyRef(i.next(), origin, mapMode)
+        val v = fromAnyRef(i.next().asInstanceOf[AnyRef], origin, mapMode)
         values.add(v)
       }
       new SimpleConfigList(origin, values)
@@ -219,12 +218,14 @@ object ConfigImpl {
   def defaultIncluder(): ConfigIncluder = DefaultIncluderHolder.defaultIncluder
 
   private def getSystemProperties(): Properties = {
-    val systemProperties = System.getProperties
-    val systemPropertiesCopy = new Properties()
-    synchronized (systemProperties) {
-      systemPropertiesCopy.putAll(systemProperties)
-    }
-    systemPropertiesCopy
+    //DOESN?T MAKE ANY SENSE IN JS
+    //val systemProperties = System.getProperties
+    //val systemPropertiesCopy = new Properties()
+    //synchronized (systemProperties) {
+    //  systemPropertiesCopy.putAll(systemProperties)
+    //}
+    //systemPropertiesCopy
+    new Properties()
   }
 
   private def loadSystemProperties(): AbstractConfigObject = {
@@ -251,7 +252,6 @@ object ConfigImpl {
     val env = System.getenv
     val m = new HashMap[String, AbstractConfigValue]()
     for ((key, value) <- env) {
-      val key = key
       m.put(key, new ConfigString.Quoted(SimpleConfigOrigin.newSimple("env var " + key), value))
     }
     new SimpleConfigObject(SimpleConfigOrigin.newSimple("env variables"), m, ResolveStatus.RESOLVED, 
@@ -317,18 +317,21 @@ object ConfigImpl {
     var traceSubstitutionsEnabled: Boolean = diagnostics.get(SUBSTITUTIONS)
   }
 
-  def traceLoadsEnabled(): Boolean = DebugHolder.traceLoadsEnabled()
+  def traceLoadsEnabled(): Boolean = 
+    DebugHolder.traceLoadsEnabled
 
-  def traceSubstitutionsEnabled(): Boolean = DebugHolder.traceSubstitutionsEnabled()
+  def traceSubstitutionsEnabled(): Boolean = 
+    DebugHolder.traceSubstitutionsEnabled
 
   def trace(message: String) {
     System.err.println(message)
   }
 
   def trace(indentLevel: Int, message: String) {
-    while (indentLevel > 0) {
+    var _indentLevel = indentLevel
+    while (_indentLevel > 0) {
       System.err.print("  ")
-      indentLevel -= 1
+      _indentLevel -= 1
     }
     System.err.println(message)
   }

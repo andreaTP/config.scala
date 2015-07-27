@@ -19,9 +19,10 @@ import java.net.URLConnection
 import java.util._
 import com.typesafe.config._
 import com.typesafe.config.parser._
+import Parseable._
 import ParseableURL._
 import ParseableResources._
-import Parseable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 

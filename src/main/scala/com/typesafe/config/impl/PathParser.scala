@@ -3,7 +3,9 @@ package com.typesafe.config.impl
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigOrigin
 import com.typesafe.config.ConfigSyntax
+import com.typesafe.config.ConfigSyntax._
 import com.typesafe.config.ConfigValueType
+import com.typesafe.config.ConfigValueType._
 import java.io.StringReader
 import java.util._
 //remove if not needed

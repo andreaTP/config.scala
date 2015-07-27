@@ -37,7 +37,7 @@ object ConfigImplUtil {
         case '\f' => sb.append("\\f")
         case '\r' => sb.append("\\r")
         case '\t' => sb.append("\\t")
-        case _ => if (isC0Control(c)) sb.append(String.format("\\u%04x", c.toInt)) else sb.append(c)
+        case _ => if (isC0Control(c)) sb.append(String.format("\\u%04x", c.toInt.asInstanceOf[Object])) else sb.append(c)
       }
     }
     sb.append('"')
@@ -117,18 +117,19 @@ object ConfigImplUtil {
     }
   }
 
-  def joinPath(elements: String*): String = (new Path(elements)).render()
+  def joinPath(elements: String*): String = 
+    new Path(elements :_*).render()
 
   def joinPath(elements: List[String]): String = {
-    joinPath(elements.toArray(Array.ofDim[String](0)))
+    joinPath(elements.toArray(Array.ofDim[String](0)):_*)
   }
 
   def splitPath(path: String): List[String] = {
     var p = Path.newPath(path)
     val elements = new ArrayList[String]()
     while (p != null) {
-      elements.add(p.first())
-      p = p.remainder()
+      elements.add(p.first)
+      p = p.remainder
     }
     elements
   }
